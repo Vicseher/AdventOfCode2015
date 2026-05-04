@@ -3,29 +3,30 @@ import fs from 'node:fs/promises'
 try {
     const data = await fs.readFile('data.txt','utf-8')
     const words = data.split(/\r?\n/i)
-    let previousLetter = ""
-    let wordAux =""
-    let position = 0
+
     let goodWords = 0
     let letterRepeatsItself = false
+    let pairOfLettersTwice = false
+    let pairOfLetters = ""
+
     for (const word of words ){
-
-        previousLetter = word[0]
-        wordAux = word.substring(1)
         
-        position = 0
-        for (const letter of word){
+        for(let position = 0; position < word.length - 2; position++){
+            pairOfLetters = word.substring(position,position+2)
+            if(word[position] === word[position+2])
+                letterRepeatsItself = true
 
-            if(position + 2 < word.length)
-                if(word[position] === word[position+2])
-                    letterRepeatsItself = true
-            position++
+            if(word.substring(0,position).includes(pairOfLetters) || word.substring(position+2).includes(pairOfLetters))
+                pairOfLettersTwice = true
         }
 
-        if(letterRepeatsItself)
+        if(letterRepeatsItself && pairOfLettersTwice){
+            console.log("A word that has letters that repeat themselves is: ", word)
             goodWords += 1
-        
+        }
         letterRepeatsItself = false
+        pairOfLettersTwice = false
+        
     }
 
     console.log("The amount of nice strings are: ", goodWords)
